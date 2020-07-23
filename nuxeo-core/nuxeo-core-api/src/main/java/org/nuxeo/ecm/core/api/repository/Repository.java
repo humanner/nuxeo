@@ -45,6 +45,8 @@ public class Repository {
     @XNode("@isDefault")
     private Boolean isDefault;
 
+    private Boolean headless;
+
     /**
      * Factory to used to create the low-level repository.
      */
@@ -53,10 +55,17 @@ public class Repository {
     public Repository() {
     }
 
+    /** @deprecated since 11.2 */
+    @Deprecated
     public Repository(String name, String label, Boolean isDefault, Callable<Object> repositoryFactory) {
+        this(name, label, isDefault, null, repositoryFactory);
+    }
+
+    public Repository(String name, String label, Boolean isDefault, Boolean headless, Callable<Object> repositoryFactory) {
         this.name = name;
         this.label = label;
         this.isDefault = isDefault;
+        this.headless = headless;
         this.repositoryFactory = repositoryFactory;
     }
 
@@ -82,6 +91,14 @@ public class Repository {
 
     public boolean isDefault() {
         return Boolean.TRUE.equals(isDefault);
+    }
+
+    /** @since 11.2 */
+    public boolean isHeadless() {
+        if (isDefault()) {
+            return Boolean.TRUE.equals(headless);
+        }
+        return !Boolean.FALSE.equals(headless);
     }
 
     public Callable<Object> getRepositoryFactory() {
